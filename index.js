@@ -1,34 +1,17 @@
-
 'use strict'
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import HomePage from '../HomePage.vue'
+// Import router package
+const router = require('express').Router();
 
+/* Hand get requests for '/'
+this is the index or home page
+*/
+router.get('/', function (req, res) {
 
+    // Send a JSON response - this app will be a web api so no need to send HTML
+    //res.end(JSON.stringify({message: 'This is the home page'}));
+    res.json({content: 'This is the default route.'});
 
-Vue.use(VueRouter);
+});
 
-const routes = [
-  {
-    path: '/',
-    name: 'HomePage',
-    component: HomePage
-  },
-  {
-    path: '/StudentDetails',
-    name: 'StudentDetails',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../StudentInfo.vue')
-  },
-]
-
-const router = new VueRouter({
-  routes
-})
-
-export default router
-
-
-
+// export
+module.exports = router;

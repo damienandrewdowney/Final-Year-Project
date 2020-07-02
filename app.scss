@@ -1,0 +1,19 @@
+@import '~bootstrap/scss/bootstrap';
+
+.delete-icon {
+    text-align: center;
+}
+
+.delete-icon a {
+    color: white;
+}
+
+.delete-icon :hover {
+    color: red;
+}
+
+.error {
+    border-color: #e94b35 !important;
+}
+
+

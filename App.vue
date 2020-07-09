@@ -12,13 +12,25 @@
                 </div>
                 <div class="col-sm-3">
                     <Login />
-                    <span v-show="loggedIn">
-                        <router-link to="/">Home</router-link>
-                        <br>
-                        <router-link to="/StudentDetails">Student Details</router-link>
-                    </span>
-                </div>
-            </div>   
+                 </div>
+            </div> 
+             <div id ="nav" class = "row row-nav"> 
+                 <button class="btn btn-light">
+                      <router-link to="/">Home</router-link> 
+                </button>
+
+                <button class="btn btn-light">
+                    <router-link to="/StudentDetails">Student Details</router-link>
+                </button>
+                
+                <span v-show="loggedIn">
+                    <button class="btn btn-light">
+                        <router-link to="/addData">Add New User</router-link>
+                    </button>
+                </span>
+            </div>
+                
+              
     </div>
         <router-view /> 
 </div>
@@ -36,6 +48,19 @@ img {
 #img2 img{
     width: 85em;
     height: 45em;
+}
+
+#nav{
+    padding-left: 8em;
+}
+
+button {
+    margin: 0.5em;
+    margin-left: 3em;
+    margin-right: 2em;    
+    border-radius: 1em;
+    border-color: black;
+    font-size: 20px;
 }
 </style>
 

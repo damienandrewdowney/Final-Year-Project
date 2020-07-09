@@ -8,16 +8,16 @@
         <thead>
             <tr>
                 <th>
-                    <input class="form-control search-medium" placeholder="Type" v-model="search.examType.criteria">
+                    <input class="form-control search-medium" placeholder="Type" v-model="searchTwo.examType.criteria">
                 </th>  
                 <th>
-                    <input class="form-control search-medium" placeholder="Subject" v-model="search.schoolSubject.criteria">
+                    <input class="form-control search-medium" placeholder="Subject" v-model="searchTwo.schoolSubject.criteria">
                 </th>
                 <th>
-                    <input class="form-control search-medium" placeholder="Teacher" v-model="search.teacher.criteria">
+                    <input class="form-control search-medium" placeholder="Teacher" v-model="searchTwo.teacher.criteria">
                 </th>
                 <th>
-                    <input class="form-control" placeholder="Result" v-model="search.result.criteria">
+                    <input class="form-control" placeholder="Result" v-model="searchTwo.result.criteria">
                 </th>
                 <th>
                     <button class="btn btn-primary" v-on:click ="getResults">Find</button>
@@ -59,7 +59,7 @@ export default {
     data: () => {
         return {
             // used for search
-            search: {
+            searchTwo: {
                 studentId: {
                     column: 'studentId',
                     operator: '=',
@@ -93,7 +93,7 @@ export default {
     methods: {
         getResults() {
             // $parent is the parent component (in this case the StudentInfo.vue component)
-            this.$parent.getResults(this.search, this.sortItem);
+            this.$parent.getResults(this.$parent.search,this.searchTwo);
         },
     },
 }

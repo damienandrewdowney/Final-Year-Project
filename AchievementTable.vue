@@ -8,13 +8,13 @@
                 <thead>
                     <tr>
                         <th>
-                            <input class="form-control search-medium" placeholder="Achievement" v-model="search.achievement.criteria">
+                            <input class="form-control search-medium" placeholder="Achievement" v-model="searchTwo.achievement.criteria">
                         </th>  
                         <th>
-                            <input class="form-control search-medium" placeholder="Date" v-model="search.achievementDate.criteria">
+                            <input class="form-control search-medium" placeholder="Date" v-model="searchTwo.achievementDate.criteria">
                         </th>
                         <th>
-                            <input class="form-control search-medium" placeholder="Teacher" v-model="search.teacher.criteria">
+                            <input class="form-control search-medium" placeholder="Teacher" v-model="searchTwo.teacher.criteria">
                         </th>
                         <th>
                             <button class="btn btn-primary" v-on:click ="getAchievements">Find</button>
@@ -52,7 +52,7 @@ export default {
     data: () => {
         return {
             // used for search
-            search: {
+            searchTwo: {
                 achievement: {
                     column: 'achievement',
                     operator: '=',
@@ -76,7 +76,7 @@ export default {
     methods: {
         getAchievements() {
             // $parent is the parent component (in this case the StudentInfo.vue component)
-            this.$parent.getAchievements(this.search, this.sortItem);
+            this.$parent.getAchievements(this.$parent.search,this.searchTwo);
         },
     },
 }

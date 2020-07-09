@@ -10,20 +10,20 @@ const { sql, dbConnPoolPromise, buildSelect } = require('../database/db.js');
 // These are parameterised queries note @named parameters.
 // Input parameters are parsed and set before queries are executed
 
-// for json path - Tell MS SQL to return results as JSON
-const SQL_SELECT_ALL = 'SELECT * FROM X00158259.Results';
+// for json path - Tell MS SQL to return result as JSON
+const SQL_SELECT_ALL = 'SELECT * FROM X00158259.Result';
 // without_array_wrapper - use for single result
 
-const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.Results WHERE id = @id for json path, without_array_wrapper;';
+const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.Result WHERE id = @id for json path, without_array_wrapper;';
 
 // Second statement (Select...) returns inserted record identified by id = SCOPE_IDENTITY()
 //need to look at changing next few lines
-const SQL_INSERT = 'INSERT INTO X00158259.Results (ResultEntry, studentId, examType, schoolSubject, result, teacher, comment) VALUES (@ResultEntry, @studentId, @examType, @schoolSubject, @result, @teacher, @comment); SELECT * from X00158259.Results WHERE id = SCOPE_IDENTITY();';
+const SQL_INSERT = 'INSERT INTO X00158259.Result (ResultEntry, studentId, examType, schoolSubject, result, teacher, comment) VALUES (@ResultEntry, @studentId, @examType, @schoolSubject, @result, @teacher, @comment); SELECT * from X00158259.Result WHERE id = SCOPE_IDENTITY();';
 
 
 /**
  * GET a list of all or if search criteria is set filter
- * Address http://server:port/Results
+ * Address http://server:port/Result
  * @search (optional) passed as parameter via url
  * @return JSON object
  */

@@ -8,16 +8,16 @@
                      <thead>
             <tr>
                 <th>
-                    <input class="form-control search-medium" placeholder="Subject" v-model="search.schoolSubject.criteria">
+                    <input class="form-control search-medium" placeholder="Subject" v-model="searchTwo.schoolSubject.criteria">
                 </th>  
                 <th>
-                    <input class="form-control search-medium" placeholder="CBA" v-model="search.CBANumber.criteria">
+                    <input class="form-control search-medium" placeholder="CBA" v-model="searchTwo.CBANumber.criteria">
                 </th>
                 <th>
-                    <input class="form-control search-medium" placeholder="Teacher" v-model="search.teacher.criteria">
+                    <input class="form-control search-medium" placeholder="Teacher" v-model="searchTwo.teacher.criteria">
                 </th>
                 <th>
-                    <input class="form-control" placeholder="Descriptor" v-model="search.descriptor.criteria">
+                    <input class="form-control" placeholder="Descriptor" v-model="searchTwo.descriptor.criteria">
                 </th>
                 <th>
                     <button class="btn btn-primary" v-on:click ="getCBAs">Find</button>
@@ -57,13 +57,7 @@ export default {
     data: () => {
         return {
             // used for search
-            search: {
-                studentId: {
-                    column: 'studentId',
-                    operator: '=',
-                    criteria: null
-                    
-                },
+            searchTwo: {
                 schoolSubject: {
                     column: 'schoolSubject',
                     operator: '=',
@@ -91,7 +85,7 @@ export default {
     methods: {
         getCBAs() {
             // $parent is the parent component (in this case the StudentInfo.vue component)
-            this.$parent.getCBAs(this.search, this.sortItem);
+            this.$parent.getCBAs(this.$parent.search,this.searchTwo);
         },
     },
 

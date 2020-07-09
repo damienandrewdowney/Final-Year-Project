@@ -88,13 +88,17 @@ export default {
                 },
                 
             },
+            searchTwo: {
+                
+            },
+                
     
             CBAs: null,
             links: null,
             results: null,
             students: null,
             achievements: null,
-            student: null
+            student: null,
             
 
         }
@@ -105,7 +109,7 @@ export default {
         getData() {
             this.error = null;
             this.loading = true;
-            axios.all([this.getCBAs(this.search),this.getLinks(),this.getResults(this.search),this.getStudents(this.search),this.getAchievements(this.search)])
+            axios.all([this.getCBAs(this.search),this.getResults(this.search),this.getStudents(this.search),this.getAchievements(this.search)])
                 .catch(error => {
                     this.loading = false;
                     this.error = error.toString();
@@ -114,28 +118,40 @@ export default {
         },
 
         
-        getCBAs(search, order) {
+        getCBAs(search,searchTwo) {
+            console.log(search.studentId.criteria)
             this.error = null;
             this.loading = true;
             let url = serverDetails.url;
             let params = {...serverDetails.params};
-            if (search) {
-                params.search = {};
-                Object.values(search).forEach((value) => {
-                    if (value.criteria) {
-                        params.search[value.column] = {
-                            column: value.column,
-                            operator: value.operator,
-                            criteria: value.criteria
+            if ((search.studentName.criteria != null && search.studentId.criteria != null) && (search.studentName.criteria != '' && search.studentId.criteria != '')){
+                if (search) {
+                    params.search = {};
+                    Object.values(search).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }                        
                         }
-                        console.log(params);
-                    }
-                });
-            }
-            if (order && order.column) {
-                params.order = order;
-            }
-            axios.get(`${url}CBA`, {
+                    });
+                console.log(params);
+                }
+
+                if (searchTwo) {
+                    Object.values(searchTwo).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }
+                        }
+                    });
+                console.log(params);
+                }
+                axios.get(`${url}CBA`, {
                     params
                 })
                 .then(response => {
@@ -148,29 +164,47 @@ export default {
                     this.error = error.toString();
                     console.log(error);
                 })
+
+            }
+
+            
         },
-        getAchievements(search, order) {
+        getAchievements(search,searchTwo) {
             this.error = null;
             this.loading = true;
             let url = serverDetails.url;
             let params = {...serverDetails.params};
-            if (search) {
-                params.search = {};
-                Object.values(search).forEach((value) => {
-                    if (value.criteria) {
-                        params.search[value.column] = {
-                            column: value.column,
-                            operator: value.operator,
-                            criteria: value.criteria
+            if ((search.studentName.criteria != null && search.studentId.criteria != null) && (search.studentName.criteria != '' && search.studentId.criteria != '')){
+                if (search) {
+                    params.search = {};
+                    Object.values(search).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }
                         }
-                        console.log(params);
-                    }
-                });
-            }
-            if (order && order.column) {
-                params.order = order;
-            }
-            axios.get(`${url}Achievement`, {
+                    });
+                console.log(params);
+                }
+                
+
+                if (searchTwo) {
+                    Object.values(searchTwo).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }                        
+                        }
+                    });
+                console.log(params);
+                }
+
+            
+                axios.get(`${url}Achievement`, {
                     params
                 })
                 .then(response => {
@@ -183,66 +217,79 @@ export default {
                     this.error = error.toString();
                     console.log(error);
                 })
+             }
         },
 
-        getStudents(search, order) {
+        getStudents(search) {
             this.error = null;
             this.loading = true;
             let url = serverDetails.url;
             let params = {...serverDetails.params};
-            if (search) {
-                params.search = {};
-                Object.values(search).forEach((value) => {
-                    if (value.criteria) {
-                        params.search[value.column] = {
-                            column: value.column,
-                            operator: value.operator,
-                            criteria: value.criteria
+            if ((search.studentName.criteria != null && search.studentId.criteria != null) && (search.studentName.criteria != '' && search.studentId.criteria != '')){
+                console.log('Test')
+                if (search) {
+                    params.search = {};
+                    Object.values(search).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }
+                            console.log(params);
+                            console.log('hello')
                         }
-                        console.log(params);
-                    }
-                });
-            }
-            if (order && order.column) {
-                params.order = order;
-            }
+                    });
+                
+                }
+            
             axios.get(`${url}student`, {
-                    params
-                })
-                .then(response => {
-                    this.loading = false;
-                    this.students = response.data;
-                    console.log('promise has resolved', response.data);
-                })
-                .catch(error => {
-                    this.loading = false;
-                    this.error = error.toString();
-                    console.log(error);
-                })
+                params
+            })
+            .then(response => {
+                this.loading = false;
+                this.students = response.data;
+                console.log('promise has resolved', response.data);
+            })
+            .catch(error => {
+                this.loading = false;
+                this.error = error.toString();
+                console.log(error);
+            })
+            }
         },
 
-        getResults(search, order) {
+        getResults(search,searchTwo) {
             this.error = null;
             this.loading = true;
             let url = serverDetails.url;
             let params = {...serverDetails.params};
-            if (search) {
-                params.search = {};
-                Object.values(search).forEach((value) => {
-                    if (value.criteria) {
-                        params.search[value.column] = {
-                            column: value.column,
-                            operator: value.operator,
-                            criteria: value.criteria
+            if ((search.studentName.criteria != null && search.studentId.criteria != null) && (search.studentName.criteria != '' && search.studentId.criteria != '')){
+                if (search) {
+                    params.search = {};
+                    Object.values(search).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }
                         }
-                        console.log(params);
-                    }
-                });
-            }
-            if (order && order.column) {
-                params.order = order;
-            }
-            axios.get(`${url}results`, {
+                    });
+                }    
+                if (searchTwo) {
+                    Object.values(searchTwo).forEach((value) => {
+                        if (value.criteria) {
+                            params.search[value.column] = {
+                                column: value.column,
+                                operator: value.operator,
+                                criteria: value.criteria
+                            }                      
+                        }
+                    });
+                console.log(params);
+                }
+                axios.get(`${url}results`, {
                     params
                 })
                 .then(response => {
@@ -255,47 +302,8 @@ export default {
                     this.error = error.toString();
                     console.log(error);
                 })
-        },
-
-        getLinks(search, order) {
-            this.error = null;
-            this.loading = true;
-            let url = serverDetails.url;
-            let params = {...serverDetails.params};
-            if (search) {
-                params.search = {};
-                Object.values(search).forEach((value) => {
-                    if (value.criteria) {
-                        params.search[value.column] = {
-                            column: value.column,
-                            operator: value.operator,
-                            criteria: value.criteria
-                        }
-                        console.log(params);
-                    }
-                });
             }
-            if (order && order.column) {
-                params.order = order;
-            }
-            axios.get(`${url}link`, {
-                    params
-                })
-                .then(response => {
-                    this.loading = false;
-                    this.links = response.data;
-                    console.log('promise has resolved', response.data);
-                })
-                .catch(error => {
-                    this.loading = false;
-                    this.error = error.toString();
-                    console.log(error);
-                })
-        },
-        
-        
-        
+        },              
     },
-
 }
 </script>

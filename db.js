@@ -1,4 +1,5 @@
 'use strict'
+
 // Connect to MS SQL database and make a connection pool available
 const sql = require('mssql');
 

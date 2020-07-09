@@ -15,11 +15,11 @@ const { sql, dbConnPoolPromise, buildSelect } = require('../database/db.js');
 const SQL_SELECT_ALL = 'SELECT * FROM X00158259.CBA';
 // without_array_wrapper - use for single result
 
-const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.CBA WHERE id = @id for json path, without_array_wrapper;';
+const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.CBA WHERE CBAId = @CBAId for json path, without_array_wrapper;';
 
 // Second statement (Select...) returns inserted record identified by id = SCOPE_IDENTITY()
 //need to look at changing next few lines
-const SQL_INSERT = 'INSERT INTO X00158259.CBA (CBAId, studentId, schoolSubject, CBANumber, teacher, descriptor, comment) VALUES (@CBAId, @studentId, @schoolSubject, @CBANumber, @teacher, @descriptor, @comment); SELECT * from X00158259.CBA WHERE id = SCOPE_IDENTITY();';
+const SQL_INSERT = 'INSERT INTO X00158259.CBA (studentId, studentName, schoolSubject, CBANumber, teacher, descriptor, comment) VALUES (@studentId, @studentName, @schoolSubject, @CBANumber, @teacher, @descriptor, @comment); SELECT * from X00158259.CBA WHERE CBAId = SCOPE_IDENTITY();';
 
 
 /**
@@ -52,9 +52,9 @@ router.get('/', async (req, res) => {
  * @id passed as parameter via url
  * @return JSON object
  */
-router.get('/:id', async (req, res) => {
+router.get('/:CBAId', async (req, res) => {
     // Read value of parameter from the request url
-    const CBAId = req.params.id;
+    const CBAId = req.params.CBAId;
 
     /**
      * Validate input - important as bad input could crash the server or lead to an attack
@@ -74,7 +74,7 @@ router.get('/:id', async (req, res) => {
         const pool = await dbConnPoolPromise
         const result = await pool.request()
             // set id parameter(s) in query
-            .input('id', sql.Int, CBAId)
+            .input('CBAId', sql.Int, CBAId)
             // execute query
             .query(SQL_SELECT_BY_ID);
 
@@ -100,16 +100,10 @@ function validate(req, isUpdate) {
 
     if (isUpdate) {
         // Make sure that id is just a number - note that values are read from request body
-        const id = req.body.id;
-        if (!validator.isNumeric(String(id), { no_symbols: true })) {
+        const CBAId = req.body.CBAId;
+        if (!validator.isNumeric(String(CBAId), { no_symbols: true })) {
             errors += "invalid id; ";
         }
-    }
-
-    // Make sure that topic id is just a number - note that values are read from request body
-    const topicId = req.body.topicId;
-    if (!validator.isNumeric(String(topicId), { no_symbols: true })) {
-        errors += "invalid topic id; ";
     }
 
     // Escape text and potentially bad characters
@@ -118,7 +112,7 @@ function validate(req, isUpdate) {
         errors += "invalid subject; ";
     }
 
-    if (req.body.description) {
+    if (req.body.descriptor) {
         const descriptor = validator.escape(req.body.descriptor);
         if (descriptor === "") {
             errors += "invalid descriptor; ";
@@ -142,19 +136,20 @@ router.post('/', async (req, res) => {
         res.json({ "error": errors });
         return false;
     }
-/*
+
     // If no errors, insert
     try {
         // Get a DB connection and execute SQL
         const pool = await dbConnPoolPromise
         const result = await pool.request()
             // set parameter(s) in query
-            .input('topicId', sql.Int, req.body.topicId)
-            .input('linkDate', sql.Date, validator.escape(req.body.linkDate || ''))
-            .input('linkName', sql.NVarChar, validator.escape(req.body.linkName || ''))
-            .input('description', sql.NVarChar, validator.escape(req.body.description || ''))
-            .input('notes', sql.NVarChar, req.body.notes || '')
-            .input('linkURL', sql.NVarChar, req.body.linkURL ||'')
+            .input('studentId', sql.Int, req.body.studentId)
+            .input('studentName', sql.NVarChar, validator.escape(req.body.studentName || ''))
+            .input('schoolSubject', sql.NVarChar, validator.escape(req.body.schoolSubject || ''))
+            .input('CBANumber', sql.Int, req.body.CBANumber)
+            .input('teacher', sql.NVarChar, req.body.teacher ||'')
+            .input('descriptor', sql.NVarChar, validator.escape(req.body.descriptor || ''))
+            .input('comment', sql.NVarChar, req.body.comment || '')
             // Execute Query
             .query(SQL_INSERT);
 
@@ -166,11 +161,11 @@ router.post('/', async (req, res) => {
         res.send(err.message);
     }
 });
-
+/*
  * PUT - Update an existing link
  * This async function processes a HTTP put request
- */
-/*
+ 
+
 router.put('/', async (req, res) => {
 
     // Validate - erros string, initally empty, will store any errors
@@ -247,5 +242,4 @@ router.delete('/:id', async (req, res) => {
     }
 });
 */
-});
 module.exports = router;

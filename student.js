@@ -14,11 +14,11 @@ const { sql, dbConnPoolPromise, buildSelect } = require('../database/db.js');
 const SQL_SELECT_ALL = 'SELECT * FROM X00158259.Student';
 // without_array_wrapper - use for single result
 
-const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.Student WHERE id = @id for json path, without_array_wrapper;';
+const SQL_SELECT_BY_ID = 'SELECT * FROM X00158259.Student WHERE studentId = @studentId for json path, without_array_wrapper;';
 
 // Second statement (Select...) returns inserted record identified by id = SCOPE_IDENTITY()
 //need to look at changing next few lines
-const SQL_INSERT = 'INSERT INTO X00158259.Student (studentId, studentName, studentYear) VALUES (@studentId, @studentName, @studentYear); SELECT * from X00158259.Student WHERE id = SCOPE_IDENTITY();';
+const SQL_INSERT = 'INSERT INTO X00158259.Student (studentName, studentYear) VALUES (@studentName, @studentYear); SELECT * from X00158259.Student WHERE studentId = SCOPE_IDENTITY();';
 
 
 /**
@@ -47,20 +47,20 @@ router.get('/', async (req, res) => {
 
 /**
  * GET single by id
- * Address http://server:port/Student/:id
- * @id passed as parameter via url
+ * Address http://server:port/Student/:studentId
+ * @studentId passed as parameter via url
  * @return JSON object
  */
-router.get('/:id', async (req, res) => {
+router.get('/:studentId', async (req, res) => {
     // Read value of parameter from the request url
-    const StudentId = req.params.id;
+    const studentId = req.params.studentId;
 
     /**
      * Validate input - important as bad input could crash the server or lead to an attack
      * See Student to validator npm package (at top) for docs
      * If validation fails return an error message
      */
-    if (!validator.isNumeric(StudentId, { no_symbols: true })) {
+    if (!validator.isNumeric(studentId, { no_symbols: true })) {
         res.json({ "error": "invalid id parameter" });
         return false;
     }
@@ -73,7 +73,7 @@ router.get('/:id', async (req, res) => {
         const pool = await dbConnPoolPromise
         const result = await pool.request()
             // set id parameter(s) in query
-            .input('id', sql.Int, StudentId)
+            .input('studentId', sql.Int, studentId)
             // execute query
             .query(SQL_SELECT_BY_ID);
 
@@ -100,27 +100,21 @@ function validate(req, isUpdate) {
     if (isUpdate) {
         // Make sure that id is just a number - note that values are read from request body
         const id = req.body.id;
-        if (!validator.isNumeric(String(id), { no_symbols: true })) {
+        if (!validator.isNumeric(String(studentId), { no_symbols: true })) {
             errors += "invalid id; ";
         }
     }
 
-    // Make sure that topic id is just a number - note that values are read from request body
-    const topicId = req.body.topicId;
-    if (!validator.isNumeric(String(topicId), { no_symbols: true })) {
-        errors += "invalid topic id; ";
-    }
-
     // Escape text and potentially bad characters
-    const schoolSubject = validator.escape(req.body.schoolSubject);
-    if (schoolSubject === "") {
-        errors += "invalid subject; ";
+    const studentName = validator.escape(req.body.studentName);
+    if (studentName === "") {
+        errors += "invalid Name; ";
     }
 
-    if (req.body.description) {
-        const descriptor = validator.escape(req.body.descriptor);
-        if (descriptor === "") {
-            errors += "invalid descriptor; ";
+    if (req.body.email) {
+        const email = validator.escape(req.body.email);
+        if (email === "") {
+            errors += "invalid email ";
         }
     }
 
@@ -143,19 +137,15 @@ router.post('/', async (req, res) => {
         res.json({ "error": errors });
         return false;
     }
-/*
+
     // If no errors, insert
     try {
         // Get a DB connection and execute SQL
         const pool = await dbConnPoolPromise
         const result = await pool.request()
             // set parameter(s) in query
-            .input('topicId', sql.Int, req.body.topicId)
-            .input('linkDate', sql.Date, validator.escape(req.body.linkDate || ''))
-            .input('linkName', sql.NVarChar, validator.escape(req.body.linkName || ''))
-            .input('description', sql.NVarChar, validator.escape(req.body.description || ''))
-            .input('notes', sql.NVarChar, req.body.notes || '')
-            .input('linkURL', sql.NVarChar, req.body.linkURL ||'')
+            .input('studentName', sql.NVarChar, validator.escape(req.body.studentName || ''))
+            .input('studentYear', sql.Int, req.body.studentYear)
             // Execute Query
             .query(SQL_INSERT);
 
@@ -167,12 +157,11 @@ router.post('/', async (req, res) => {
         res.send(err.message);
     }
 });
-
+/*
 
  * PUT - Update an existing link
  * This async function processes a HTTP put request
- */
-/*
+
 router.put('/', async (req, res) => {
 
     // Validate - erros string, initally empty, will store any errors
@@ -251,5 +240,4 @@ router.delete('/:id', async (req, res) => {
     }
 });
 */
-});
 module.exports = router;
